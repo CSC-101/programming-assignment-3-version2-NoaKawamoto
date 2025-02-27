@@ -175,32 +175,117 @@ reduced_data = [
         'WY')
     ]
 
+def population_total(counties: list[CountyDemographics]) -> int:
+    return sum(county.population['2014 Population'] for county in counties)
+
+def filter_by_state(counties: list[CountyDemographics], state: str) -> list[CountyDemographics]:
+    return [county for county in counties if county.state == state]
+
+def population_by_education(counties: list[CountyDemographics], education_key: str) -> float:
+    return sum((county.population['2014 Population'] * county.education.get(education_key, 0) / 100) for county in counties)
+
+def population_by_ethnicity(counties: list[CountyDemographics], ethnicity_key: str) -> float:
+    return sum((county.population['2014 Population'] * county.ethnicities.get(ethnicity_key, 0) / 100) for county in counties)
+
+def population_below_poverty_level(counties: list[CountyDemographics]) -> float:
+    return sum((county.population['2014 Population'] * county.income.get('Persons Below Poverty Level', 0) / 100) for county in counties)
+
+def percent_by_education(counties: list[CountyDemographics], education_key: str) -> float:
+    total_population = population_total(counties)
+    return (population_by_education(counties, education_key) / total_population * 100) if total_population > 0 else 0
+
+def percent_by_ethnicity(counties: list[CountyDemographics], ethnicity_key: str) -> float:
+    total_population = population_total(counties)
+    return (population_by_ethnicity(counties, ethnicity_key) / total_population * 100) if total_population > 0 else 0
+
+def percent_below_poverty_level(counties: list[CountyDemographics]) -> float:
+    total_population = population_total(counties)
+    return (population_below_poverty_level(counties) / total_population * 100) if total_population > 0 else 0
+
+def education_greater_than(counties: list[CountyDemographics], education_key: str, threshold: float) -> list[CountyDemographics]:
+    return [county for county in counties if county.education.get(education_key, 0) > threshold]
+
+def education_less_than(counties: list[CountyDemographics], education_key: str, threshold: float) -> list[CountyDemographics]:
+    return [county for county in counties if county.education.get(education_key, 0) < threshold]
+
+def ethnicity_greater_than(counties: list[CountyDemographics], ethnicity_key: str, threshold: float) -> list[CountyDemographics]:
+    return [county for county in counties if county.ethnicities.get(ethnicity_key, 0) > threshold]
+
+def ethnicity_less_than(counties: list[CountyDemographics], ethnicity_key: str, threshold: float) -> list[CountyDemographics]:
+    return [county for county in counties if county.ethnicities.get(ethnicity_key, 0) < threshold]
+
+def below_poverty_level_greater_than(counties: list[CountyDemographics], threshold: float) -> list[CountyDemographics]:
+    return [county for county in counties if county.income.get('Persons Below Poverty Level', 0) > threshold]
+
+def below_poverty_level_less_than(counties: list[CountyDemographics], threshold: float) -> list[CountyDemographics]:
+    return [county for county in counties if county.income.get('Persons Below Poverty Level', 0) < threshold]
+
+
+
+
 class TestCases(unittest.TestCase):
     pass
 
-    # Part 1
-    # test population_total
+        # Part 1
+    def test_population_total(self):
+        self.assertEqual(population_total(self.data), 318857056)
 
-    # Part 2
-    # test filter_by_state
+        # Part 2
 
-    # Part 3
-    # test population_by_education
-    # test population_by_ethnicity
-    # test population_below_poverty_level
+    def test_filter_by_state(self):
+        california_counties = filter_by_state(self.data, 'CA')
+        self.assertEqual(len(california_counties), 58)
 
-    # Part 4
-    # test percent_by_education
-    # test percent_by_ethnicity
-    # test percent_below_poverty_level
+        # Part 3
+
+    def test_population_by_education(self):
+        total_bachelors = population_by_education(self.data, "Bachelor's Degree or Higher")
+        self.assertGreater(total_bachelors, 0)
+
+
+    def test_population_by_ethnicity(self):
+        total_hispanic = population_by_ethnicity(self.data, 'Hispanic or Latino')
+        self.assertGreater(total_hispanic, 0)
+
+        # Part 4
+
+    def test_population_below_poverty_level(self):
+        total_poverty = population_below_poverty_level(self.data)
+        self.assertGreater(total_poverty, 0)
+
+    def test_percent_by_education(self):
+        percent_bachelors = percent_by_education(self.data, "Bachelor's Degree or Higher")
+        self.assertGreater(percent_bachelors, 0)
+
+
+    def test_percent_by_ethnicity(self):
+        percent_hispanic = percent_by_ethnicity(self.data, 'Hispanic or Latino')
+        self.assertGreater(percent_hispanic, 0)
+
+
+    def test_percent_below_poverty_level(self):
+        percent_poverty = percent_below_poverty_level(self.data)
+        self.assertGreater(percent_poverty, 0)
 
     # Part 5
-    # test education_greater_than
-    # test education_less_than
-    # test ethnicity_greater_than
-    # test ethnicity_less_than
-    # test below_poverty_level_greater_than
-    # test below_poverty_level_less_than
+    def test_education_greater_than(self):
+        highly_educated = education_greater_than(self.data, "Bachelor's Degree or Higher", 60)
+        self.assertIsInstance(highly_educated, list)
+
+
+    def test_education_less_than(self):
+        less_educated = education_less_than(self.data, "Bachelor's Degree or Higher", 20)
+        self.assertIsInstance(less_educated, list)
+
+
+    def test_ethnicity_greater_than(self):
+        high_hispanic = ethnicity_greater_than(self.data, 'Hispanic or Latino', 30)
+        self.assertIsInstance(high_hispanic, list)
+
+    def test_ethnicity_less_than(self):
+        low_hispanic = ethnicity_less_than(self.data, 'Hispanic or Latino', 10)
+        self.assertIsInstance(low_hispanic, list)
+
 
 
 
