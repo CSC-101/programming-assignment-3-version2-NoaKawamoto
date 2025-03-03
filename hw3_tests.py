@@ -182,30 +182,44 @@ reduced_data = [
 
 class TestCases(unittest.TestCase):
 
+    def setUp(self):
+        # Define sample test data to use for all test cases
+        self.data = [
+            CountyDemographics(
+                state='CA',
+                population={'2014 Population': 100000},
+                education={"Bachelor's Degree or Higher": 40},
+                ethnicities={'Hispanic or Latino': 30},
+                income={'Persons Below Poverty Level': 10}
+            ),
+            CountyDemographics(
+                state='NY',
+                population={'2014 Population': 50000},
+                education={"Bachelor's Degree or Higher": 50},
+                ethnicities={'Hispanic or Latino': 20},
+                income={'Persons Below Poverty Level': 12}
+            )
+        ]
 
-        # Part 1
+    # Part 1
     def test_population_total(self):
-        self.assertEqual(population_total(self.data), 318857056)
+        self.assertEqual(population_total(self.data), 150000)
 
-        # Part 2
-
+    # Part 2
     def test_filter_by_state(self):
         california_counties = filter_by_state(self.data, 'CA')
-        self.assertEqual(len(california_counties), 58)
+        self.assertEqual(len(california_counties), 1)
 
-        # Part 3
-
+    # Part 3
     def test_population_by_education(self):
         total_bachelors = population_by_education(self.data, "Bachelor's Degree or Higher")
         self.assertGreater(total_bachelors, 0)
-
 
     def test_population_by_ethnicity(self):
         total_hispanic = population_by_ethnicity(self.data, 'Hispanic or Latino')
         self.assertGreater(total_hispanic, 0)
 
-        # Part 4
-
+    # Part 4
     def test_population_below_poverty_level(self):
         total_poverty = population_below_poverty_level(self.data)
         self.assertGreater(total_poverty, 0)
@@ -214,11 +228,9 @@ class TestCases(unittest.TestCase):
         percent_bachelors = percent_by_education(self.data, "Bachelor's Degree or Higher")
         self.assertGreater(percent_bachelors, 0)
 
-
     def test_percent_by_ethnicity(self):
         percent_hispanic = percent_by_ethnicity(self.data, 'Hispanic or Latino')
         self.assertGreater(percent_hispanic, 0)
-
 
     def test_percent_below_poverty_level(self):
         percent_poverty = percent_below_poverty_level(self.data)
@@ -226,24 +238,20 @@ class TestCases(unittest.TestCase):
 
     # Part 5
     def test_education_greater_than(self):
-        highly_educated = education_greater_than(self.data, "Bachelor's Degree or Higher", 60)
+        highly_educated = education_greater_than(self.data, "Bachelor's Degree or Higher", 40)
         self.assertIsInstance(highly_educated, list)
 
-
     def test_education_less_than(self):
-        less_educated = education_less_than(self.data, "Bachelor's Degree or Higher", 20)
+        less_educated = education_less_than(self.data, "Bachelor's Degree or Higher", 50)
         self.assertIsInstance(less_educated, list)
 
-
     def test_ethnicity_greater_than(self):
-        high_hispanic = ethnicity_greater_than(self.data, 'Hispanic or Latino', 30)
+        high_hispanic = ethnicity_greater_than(self.data, 'Hispanic or Latino', 20)
         self.assertIsInstance(high_hispanic, list)
 
     def test_ethnicity_less_than(self):
         low_hispanic = ethnicity_less_than(self.data, 'Hispanic or Latino', 10)
         self.assertIsInstance(low_hispanic, list)
-
-
 
 
 if __name__ == '__main__':
