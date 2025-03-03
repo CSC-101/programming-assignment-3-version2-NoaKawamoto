@@ -1,4 +1,4 @@
-import data
+from data import education_greater_than
 import build_data
 import unittest
 
@@ -175,56 +175,13 @@ reduced_data = [
         'WY')
     ]
 
-def population_total(counties: list[CountyDemographics]) -> int:
-    return sum(county.population['2014 Population'] for county in counties)
 
-def filter_by_state(counties: list[CountyDemographics], state: str) -> list[CountyDemographics]:
-    return [county for county in counties if county.state == state]
-
-def population_by_education(counties: list[CountyDemographics], education_key: str) -> float:
-    return sum((county.population['2014 Population'] * county.education.get(education_key, 0) / 100) for county in counties)
-
-def population_by_ethnicity(counties: list[CountyDemographics], ethnicity_key: str) -> float:
-    return sum((county.population['2014 Population'] * county.ethnicities.get(ethnicity_key, 0) / 100) for county in counties)
-
-def population_below_poverty_level(counties: list[CountyDemographics]) -> float:
-    return sum((county.population['2014 Population'] * county.income.get('Persons Below Poverty Level', 0) / 100) for county in counties)
-
-def percent_by_education(counties: list[CountyDemographics], education_key: str) -> float:
-    total_population = population_total(counties)
-    return (population_by_education(counties, education_key) / total_population * 100) if total_population > 0 else 0
-
-def percent_by_ethnicity(counties: list[CountyDemographics], ethnicity_key: str) -> float:
-    total_population = population_total(counties)
-    return (population_by_ethnicity(counties, ethnicity_key) / total_population * 100) if total_population > 0 else 0
-
-def percent_below_poverty_level(counties: list[CountyDemographics]) -> float:
-    total_population = population_total(counties)
-    return (population_below_poverty_level(counties) / total_population * 100) if total_population > 0 else 0
-
-def education_greater_than(counties: list[CountyDemographics], education_key: str, threshold: float) -> list[CountyDemographics]:
-    return [county for county in counties if county.education.get(education_key, 0) > threshold]
-
-def education_less_than(counties: list[CountyDemographics], education_key: str, threshold: float) -> list[CountyDemographics]:
-    return [county for county in counties if county.education.get(education_key, 0) < threshold]
-
-def ethnicity_greater_than(counties: list[CountyDemographics], ethnicity_key: str, threshold: float) -> list[CountyDemographics]:
-    return [county for county in counties if county.ethnicities.get(ethnicity_key, 0) > threshold]
-
-def ethnicity_less_than(counties: list[CountyDemographics], ethnicity_key: str, threshold: float) -> list[CountyDemographics]:
-    return [county for county in counties if county.ethnicities.get(ethnicity_key, 0) < threshold]
-
-def below_poverty_level_greater_than(counties: list[CountyDemographics], threshold: float) -> list[CountyDemographics]:
-    return [county for county in counties if county.income.get('Persons Below Poverty Level', 0) > threshold]
-
-def below_poverty_level_less_than(counties: list[CountyDemographics], threshold: float) -> list[CountyDemographics]:
-    return [county for county in counties if county.income.get('Persons Below Poverty Level', 0) < threshold]
 
 
 
 
 class TestCases(unittest.TestCase):
-    pass
+
 
         # Part 1
     def test_population_total(self):
